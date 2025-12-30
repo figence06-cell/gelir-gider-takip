@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,21 +9,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { TransactionType, INCOME_CATEGORIES, EXPENSE_CATEGORIES, Transaction } from '@/types/transaction';
+import { TransactionType, Transaction } from '@/types/transaction';
 import { Plus, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TransactionFormProps {
   onSubmit: (transaction: Omit<Transaction, 'id'>) => void;
+  categories: string[];
+  onTypeChange: (type: TransactionType) => void;
 }
 
-export const TransactionForm = ({ onSubmit }: TransactionFormProps) => {
+export const TransactionForm = ({ onSubmit, categories, onTypeChange }: TransactionFormProps) => {
   const [type, setType] = useState<TransactionType>('expense');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
 
-  const categories = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+  useEffect(() => {
+    setCategory('');
+  }, [type]);
+
+  const handleTypeChange = (newType: TransactionType) => {
+    setType(newType);
+    onTypeChange(newType);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +58,7 @@ export const TransactionForm = ({ onSubmit }: TransactionFormProps) => {
       <div className="flex gap-2 p-1 bg-secondary rounded-xl">
         <button
           type="button"
-          onClick={() => { setType('expense'); setCategory(''); }}
+          onClick={() => handleTypeChange('expense')}
           className={cn(
             "flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all duration-200",
             type === 'expense' 
@@ -62,7 +71,7 @@ export const TransactionForm = ({ onSubmit }: TransactionFormProps) => {
         </button>
         <button
           type="button"
-          onClick={() => { setType('income'); setCategory(''); }}
+          onClick={() => handleTypeChange('income')}
           className={cn(
             "flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all duration-200",
             type === 'income' 

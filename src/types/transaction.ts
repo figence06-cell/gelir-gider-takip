@@ -9,15 +9,15 @@ export interface Transaction {
   date: Date;
 }
 
-export const INCOME_CATEGORIES = [
+export const DEFAULT_INCOME_CATEGORIES = [
   'Maaş',
   'Freelance',
   'Yatırım',
   'Hediye',
   'Diğer Gelir',
-] as const;
+];
 
-export const EXPENSE_CATEGORIES = [
+export const DEFAULT_EXPENSE_CATEGORIES = [
   'Yemek',
   'Ulaşım',
   'Alışveriş',
@@ -26,4 +26,4 @@ export const EXPENSE_CATEGORIES = [
   'Eğlence',
   'Kira',
   'Diğer Gider',
-] as const;
+];

@@ -1,25 +1,39 @@
+import { useState } from 'react';
 import { SummaryCard } from '@/components/SummaryCard';
 import { TransactionForm } from '@/components/TransactionForm';
 import { TransactionList } from '@/components/TransactionList';
+import { CategoryManager } from '@/components/CategoryManager';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useCategories } from '@/hooks/useCategories';
 import { Wallet } from 'lucide-react';
+import { TransactionType } from '@/types/transaction';
 
 const Index = () => {
   const { transactions, addTransaction, deleteTransaction, totals } = useTransactions();
+  const { incomeCategories, expenseCategories, addCategory, deleteCategory, getCategories } = useCategories();
+  const [formType, setFormType] = useState<TransactionType>('expense');
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary shadow-glow">
-              <Wallet className="h-5 w-5 text-primary-foreground" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary shadow-glow">
+                <Wallet className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-foreground">Gelir Gider Takibi</h1>
+                <p className="text-sm text-muted-foreground">Günlük finansal durumunuz</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Gelir Gider Takibi</h1>
-              <p className="text-sm text-muted-foreground">Günlük finansal durumunuz</p>
-            </div>
+            <CategoryManager
+              incomeCategories={incomeCategories}
+              expenseCategories={expenseCategories}
+              onAddCategory={addCategory}
+              onDeleteCategory={deleteCategory}
+            />
           </div>
         </div>
       </header>
@@ -53,7 +67,11 @@ const Index = () => {
           <section className="lg:col-span-1">
             <div className="bg-card border border-border rounded-2xl p-6 shadow-card animate-fade-in">
               <h2 className="text-lg font-bold text-foreground mb-5">Yeni İşlem</h2>
-              <TransactionForm onSubmit={addTransaction} />
+              <TransactionForm 
+                onSubmit={addTransaction} 
+                categories={getCategories(formType)}
+                onTypeChange={setFormType}
+              />
             </div>
           </section>
 
