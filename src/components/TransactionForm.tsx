@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,8 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { TransactionType, Transaction } from '@/types/transaction';
-import { Plus, TrendingUp, TrendingDown } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TransactionFormProps {
@@ -24,6 +32,7 @@ export const TransactionForm = ({ onSubmit, categories, onTypeChange }: Transact
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
     setCategory('');
@@ -44,12 +53,13 @@ export const TransactionForm = ({ onSubmit, categories, onTypeChange }: Transact
       amount: parseFloat(amount),
       description,
       category,
-      date: new Date(),
+      date,
     });
 
     setAmount('');
     setDescription('');
     setCategory('');
+    setDate(new Date());
   };
 
   return (
@@ -126,6 +136,34 @@ export const TransactionForm = ({ onSubmit, categories, onTypeChange }: Transact
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Date */}
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">Tarih</Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full h-12 justify-start text-left font-normal",
+                !date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, "d MMMM yyyy", { locale: tr }) : <span>Tarih seçin</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(d) => d && setDate(d)}
+              initialFocus
+              className="pointer-events-auto"
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Submit Button */}
